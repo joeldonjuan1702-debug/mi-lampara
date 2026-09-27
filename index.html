@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I LOVE YOU ❤️</title>
+<style>
+    *{
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .room {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+            radial-gradient(circle at 50% 45%,
+                rgba(255, 220, 150, 0.05),
+                transparent 30%),
+                linear-gradient (90deg,
+                #17120e, #090909);
+                transition: 1s;
+    }
+    .room.on {
+        background:
+            radial-gradient(circle at 50% 45%,
+                rgba(255, 200, 100, 0.35),
+                transparent 45%),
+                linear-gradient(90deg,
+                #35271c, #111);
+    }
+    .message {
+        position: absolute;
+        top:35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: clamp(50px, 10vw, 120px);
+        font-weight: bold;
+        white-space: nowrap;
+        opacity: 0.08;
+        transition: 1s;
+    }
+    .room.on .message {
+        opacity: 1;
+    }
+    .message .i {
+        color: #ff0b26;
+    }
+    .message .heart {
+        color: #ff5d86;
+        display: inline-block;
+        animation: heartbeat 1s infinite;
+    }
+    .message .you {
+        color: #ff9b26;
+    }
+    @keyframes heartbeat {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.15);
+        }
+    }
+    .lamp {
+        position: absolute;
+        left: 50%;
+        top: 15%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 300px;
+    }
+    .wire {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 4px;
+        height: 100px;
+        background: #444;
+        transform: translateX(-50%);
+    }
+    .shade {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 130px;
+        height: 70px;
+        background: #444;
+        border-radius: 70px 70px 15px 15px;
+        z-index: 2;
+    }
+    .bulb {
+        position: absolute;
+        top: 125px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 55px;
+        height: 75px;
+        background: #333;
+        transition: 0.5s;
+        z-index: 1;
+    }
+    .room.on .bulb {
+        background: #ffd36b;
+        box-shadow:
+            0 0 25px #ffd36b,
+            0 0 60px #ffb52e,
+            0 0 100px rgba(255, 181, 46, 0.5),
+    }
+    .rope {
+        position: absolute;
+        top: 190px;
+        left: 50%;
+        width: 4px;
+        height: 100px;
+        background: #c7a56a;
+        transform: translateX(-50%);
+    }
+    .handle {
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #e8b45b;
+        transform: translateX(-50%);
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(255, 200, 100, 0.5);
+    }
+    .handle:hover {
+        transform: translateX(-50%) scale(1.1);
+    }
+    .hint {
+        position: absolute;
+        top: 75%;
+        left: 50%;
+        transform: translate(-50%);
+        color: #aaa;
+        font-size: 14px;
+        text-align: center;
+        transition: 0.5s;
+    }
+    .room.on .hint {
+        color: #ddd;
+    }
+    .hearts {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    .floating-heart {
+        position: absolute;
+        color: #ff5d86;
+        font-size: 25px;
+        opacity: 0;
+        animation: float 4s linear forwards;
+    }
+    @keyframes float {
+        0% {
+            transform: translateY(0) scale(1);
+            opacity: 0;
+        }
+        20% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-300px) scale(1.2);
+            opacity: 0;
+        }
+    }
+    .bottom-text {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 3px;
+        color: #888;
+    }
+    </style>
+</head>
+<body>
+    <div class="room" id="room">
+        <div class="message">
+            <span class="i">I</span>
+            <span class="heart">❤️</span>
+            <span class="you">YOU</span>
+    </div>
+    </div class="lamp">
+        <div class="wire"></div>
+        <div class="shade"></div>
+        <div class="bulb"></div>
+        <div class="rope">
+            <div class="handle" id="pullSwitch"></div>
+        </div>
+    </div>
+    <div class=" hint"id="hint">Tira del interruptor para encender la lámpara</div>
+    <div class="hearts" id="hearts"></div>
+    <div class="bottom-text">Hecho con ❤️ por <a href="https://github.com/tu-usuario" target="_blank">Joel Abdiel</a></div>
+    <script>
+        const room = document.getElementById('room');
+        const pullSwitch = document.getElementById('pullSwitch');
+        const hint = document.getElementById('hint');
+        const heartsContainer = document.getElementById('hearts');
+        let isOn = false;
+
+        pullSwitch.addEventListener('click', () => {
+            isOn = !isOn;
+            room.classList.toggle('on', isOn);
+             if (isOn) {
+             hint.textContent = "Tira otra vex para apagar";
+             createHearts();
+            } else{
+                hit.textContent = "Tira del interruptor para encender";
+            }
+            
+        });
+        function createHearts() {
+            for (let i = 0; i < 12; i++){
+                const heart = document.createElement("div");
+                heart.classList.add("floating-heart");
+                heart.textContent = "❤️"
+                heart.style.left = Math.random() * 100 + "%";
+                heart.style.top = (55 + Math.random() *25) + "%";
+                heart.style.animationDelay = Math.random() * 1.5 + "s";
+                heart.appendChild(heart);
+                setTimeout(() => {heart.remove();
+                }, 5000);
+             }
+        }
+        
+    </script>
+</body>
+</html>
